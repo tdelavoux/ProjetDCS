@@ -1,7 +1,6 @@
 package CommServCli;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -13,7 +12,6 @@ public class ListFileServer {
 		public ListFileServer() {
 			this.list = new LinkedHashMap<>();
 		}
-		
 		
 		/**
 		 * Insertion d'une file de Fichier à la connexion d'un client
