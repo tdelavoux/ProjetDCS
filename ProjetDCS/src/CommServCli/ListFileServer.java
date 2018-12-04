@@ -36,8 +36,7 @@ public class ListFileServer {
 		 * Suppression de la liste des fichiers d'un client à sa déconnexion
 		 * @param address Adresse du client se déconnectant
 		 */
-		public void remove(Address address) {
-			
+		public void remove(Address address) {		
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet()) {
 				
 				TreeSet<Address> temp = entry.getValue();
@@ -52,10 +51,16 @@ public class ListFileServer {
 		
 		
 		
-		public TreeSet<Address> getListAddressSearch (String toSearch){
-			TreeSet<Address> res = new TreeSet<>();
 		
-			return null;
+		public LinkedHashMap<P2PFile, TreeSet<Address>> getListAddressSearch (String toSearch){
+			LinkedHashMap<P2PFile, TreeSet<Address>> temp =  new LinkedHashMap<>();
+			
+			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet()) {
+				if(entry.getKey().getName().indexOf(toSearch) != -1) {
+					temp.put(entry.getKey(), entry.getValue());
+				}
+			}
+			return temp;
 		}
 		
 		
