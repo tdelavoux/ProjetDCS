@@ -14,11 +14,11 @@ public class ListFileServer {
 		}
 		
 		/**
-		 * Insertion d'une file de Fichier ï¿½ la connexion d'un client
-		 * @param toInsert Liste des fichiers ï¿½ insï¿½rer
+		 * Insertion d'une file de Fichier à la connexion d'un client
+		 * @param toInsert Liste des fichiers ïà insérer
 		 * @param address Adresse du client
 		 */
-		public void insert(ArrayList<P2PFile> toInsert, Address address) {
+		public synchronized void insert(ArrayList<P2PFile> toInsert, Address address) {
 			for(P2PFile file : toInsert) {
 				if(this.list.containsKey(file)) 
 					this.list.get(file).add(address);
@@ -36,7 +36,7 @@ public class ListFileServer {
 		 * Suppression de la liste des fichiers d'un client ï¿½ sa dï¿½connexion
 		 * @param address Adresse du client se dï¿½connectant
 		 */
-		public void remove(Address address) {
+		public synchronized void remove(Address address) {
 			ArrayList<P2PFile> tab = new ArrayList<>();
 			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet()) {
@@ -58,11 +58,11 @@ public class ListFileServer {
 		
 		
 		/**
-		 * Obtention de la liste des adresses pour une partie de nom de P2PFile recherchï¿½.
-		 * @param String Partie d'un nom ï¿½ recherchï¿½
+		 * Obtention de la liste des adresses pour une partie de nom de P2PFile recherche.
+		 * @param String Partie d'un nom ï¿½ recherche
 		 * @return TreeSet<Address> liste des adresses qui ont un fichier dont le nom contient toSearch, null si aucune adresse existante
 		 */
-		public TreeSet<Address> getListAddressSearch (String toSearch){
+		public synchronized TreeSet<Address> getListAddressSearch (String toSearch){
 			TreeSet<Address> res = new TreeSet<>();
 			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
@@ -82,7 +82,7 @@ public class ListFileServer {
 		 * @param searched P2PFile 	Fichier ï¿½ tï¿½lï¿½charger
 		 * @return TreeSet<Address> Liste des adresses qui ont le fichier, null si aucune adresse existante
 		 */
-		public TreeSet<Address> getListAddressDownload (P2PFile searched){
+		public synchronized TreeSet<Address> getListAddressDownload (P2PFile searched){
 		
 			return this.list.get(searched);
 		}
