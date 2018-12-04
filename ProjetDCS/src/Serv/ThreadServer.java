@@ -38,13 +38,14 @@ public class ThreadServer extends Thread{
 			System.out.println("\n");
 			
 			// Boucle de communication avec un client
-			while(true){
+			Requete ligne = null;
+			while((ligne = (Requete) ois.readObject()) != null) {
 				
-				// Réception d'un objet Requete, traitement de cette derniere et renvoie de la reponse
-				Requete request = (Requete)ois.readObject();
-				System.out.println("Réception d'une requete :");
-				
+				//Traitement de la requête reçue
+				System.out.println("Requête reçue !");
+
 			}
+			
 			
 		
 		 }catch(SocketException e) {
@@ -54,7 +55,7 @@ public class ThreadServer extends Thread{
 		 }catch(IOException e) {    
 			 System.out.println("Pb de communication " + e.toString());   
 		 }finally{
-			 
+			 System.out.println("\n == Fin de connexion avec le client : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
 		 }
 		
 	}

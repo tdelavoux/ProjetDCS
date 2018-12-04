@@ -18,6 +18,11 @@ public class Requete implements Serializable {
 		this.argument = requestTab[1];
 	}
 	
+	/**
+	 * Vérification du contenue de la requête, taillet et contenu
+	 * @param requestTab  Tableau de requête
+	 * @return Retourne vrai si la requete est correcte, fausse sinon
+	 */
 	private boolean verifyContent(String[] requestTab) {
 		
 		if(!verifyCommand(requestTab))
