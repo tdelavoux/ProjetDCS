@@ -1,4 +1,4 @@
-package servcli;
+package CommServCli;
 
 public class Address implements Comparable<Address>{
 	private String addressIp;

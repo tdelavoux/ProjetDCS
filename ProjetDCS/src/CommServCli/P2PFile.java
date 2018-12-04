@@ -1,4 +1,4 @@
-package servcli;
+package CommServCli;
 
 public class P2PFile {
 	private long taille;
