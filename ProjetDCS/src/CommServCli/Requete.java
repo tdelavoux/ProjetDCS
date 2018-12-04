@@ -11,6 +11,7 @@ public class Requete implements Serializable {
 		requestTab[1].replace(" " ,"\"");
 		
 		
+		
 		if(!verifyContent(requestTab)) 
 			throw new RequestFormationException("Nombre d'arguments invalides");
 		
@@ -41,7 +42,7 @@ public class Requete implements Serializable {
 	 */
 	private static boolean sizeVerify(String[] requete) {
 		 int taille = requete.length;
-		 if( (taille < 1 ||taille > 2)
+		 if( (taille < 1 || taille > 2)
 		   || (taille != 2 && (requete[0].equals("search") || requete[0].equals("get")))
 		   || (taille != 1 && (!requete[0].equals("search") && !requete[0].equals("get")))) {
 			 
