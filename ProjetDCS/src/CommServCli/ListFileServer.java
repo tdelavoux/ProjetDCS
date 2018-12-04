@@ -14,8 +14,8 @@ public class ListFileServer {
 		}
 		
 		/**
-		 * Insertion d'une file de Fichier à la connexion d'un client
-		 * @param toInsert Liste des fichiers à insérer
+		 * Insertion d'une file de Fichier ï¿½ la connexion d'un client
+		 * @param toInsert Liste des fichiers ï¿½ insï¿½rer
 		 * @param address Adresse du client
 		 */
 		public void insert(ArrayList<P2PFile> toInsert, Address address) {
@@ -33,40 +33,53 @@ public class ListFileServer {
 		
 		
 		/**
-		 * Suppression de la liste des fichiers d'un client à sa déconnexion
-		 * @param address Adresse du client se déconnectant
+		 * Suppression de la liste des fichiers d'un client ï¿½ sa dï¿½connexion
+		 * @param address Adresse du client se dï¿½connectant
 		 */
-		public void remove(Address address) {		
+		public void remove(Address address) {
+			ArrayList<P2PFile> tab = new ArrayList<>();
+			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet()) {
 				
 				TreeSet<Address> temp = entry.getValue();
 				if(temp.contains(address)) {
 					temp.remove(address);
 					if(temp.size() == 0) {
-						list.remove(entry.getKey());
+						tab.add(entry.getKey());
 					}
 				}
 			}
-		}
-		
-		
-		
-		
-		public LinkedHashMap<P2PFile, TreeSet<Address>> getListAddressSearch (String toSearch){
-			LinkedHashMap<P2PFile, TreeSet<Address>> temp =  new LinkedHashMap<>();
 			
-			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet()) {
-				if(entry.getKey().getName().indexOf(toSearch) != -1) {
-					temp.put(entry.getKey(), entry.getValue());
-				}
+			for(P2PFile f : tab)
+			{
+				list.remove(f);
 			}
-			return temp;
 		}
 		
 		
 		/**
-		 * Obtention de la liste des adresses pour un P2PFile recherché.
-		 * @param searched P2PFile 	Fichier à télécharger
+		 * Obtention de la liste des adresses pour une partie de nom de P2PFile recherchï¿½.
+		 * @param String Partie d'un nom ï¿½ recherchï¿½
+		 * @return TreeSet<Address> liste des adresses qui ont un fichier dont le nom contient toSearch, null si aucune adresse existante
+		 */
+		public TreeSet<Address> getListAddressSearch (String toSearch){
+			TreeSet<Address> res = new TreeSet<>();
+			
+			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
+			{
+				if(entry.getKey().getName().contains(toSearch))
+				{
+					res.addAll(entry.getValue());
+				}
+			}
+		
+			return res;
+		}
+		
+		
+		/**
+		 * Obtention de la liste des adresses pour un P2PFile recherchï¿½.
+		 * @param searched P2PFile 	Fichier ï¿½ tï¿½lï¿½charger
 		 * @return TreeSet<Address> Liste des adresses qui ont le fichier, null si aucune adresse existante
 		 */
 		public TreeSet<Address> getListAddressDownload (P2PFile searched){

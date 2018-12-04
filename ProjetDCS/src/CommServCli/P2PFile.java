@@ -1,16 +1,16 @@
 package CommServCli;
 
 public class P2PFile {
-	private long taille;
+	private long size;
 	private String name;
 	
-	public P2PFile(long taille, String name)
+	public P2PFile(long size, String name)
 	{
-		this.taille = taille;
+		this.size = size;
 		this.name = name;
 	}	
 	
-	public long getTaille() { return taille; }
+	public long getSize() { return size; }
 	public String getName() { return name; }
 
 	@Override
@@ -18,7 +18,7 @@ public class P2PFile {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (int) (taille ^ (taille >>> 32));
+		result = prime * result + (int) (size ^ (size >>> 32));
 		return result;
 	}
 
@@ -36,7 +36,7 @@ public class P2PFile {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (taille != other.taille)
+		if (size != other.size)
 			return false;
 		return true;
 	}
