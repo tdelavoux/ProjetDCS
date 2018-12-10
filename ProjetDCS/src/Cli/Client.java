@@ -2,8 +2,6 @@ package Cli;
 
 import java.io.*;
 import java.net.*;
-import java.util.TreeSet;
-
 import CommServCli.*;
 
 public class Client {
@@ -30,7 +28,6 @@ public class Client {
 		Socket comm = null;
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
-
 		BufferedReader br = null;
 
 		try

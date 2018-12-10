@@ -4,7 +4,7 @@ package Serv;
 
 import java.net.*; 
 import java.io.*; 
-import CommServCli.ListFileServer;
+import Serv.ListFileServer;
 
 public class Server { 
 

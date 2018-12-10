@@ -1,9 +1,11 @@
-package CommServCli;
-
+package Serv;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
+
+import CommServCli.Address;
+import CommServCli.P2PFile;
 
 public class ListFileServer {
 
@@ -16,15 +18,15 @@ public class ListFileServer {
 		/**
 		 * Insertion d'une file de Fichier à la connexion d'un client
 		 * @param toInsert Liste des fichiers ïà insérer
-		 * @param address Adresse du client
+		 * @param clientAddress Adresse du client
 		 */
-		public synchronized void insert(ArrayList<P2PFile> toInsert, Address address) {
+		public synchronized void insert(ArrayList<P2PFile> toInsert, Address clientAddress) {
 			for(P2PFile file : toInsert) {
 				if(this.list.containsKey(file)) 
-					this.list.get(file).add(address);
+					this.list.get(file).add(clientAddress);
 				else {
 					TreeSet<Address> temp = new TreeSet<>();
-					temp .add(address);
+					temp .add(clientAddress);
 					this.list.put(file, temp);
 				}
 			}

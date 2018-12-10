@@ -5,12 +5,12 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 import CommServCli.Address;
-import CommServCli.ListFileServer;
 import CommServCli.P2PFile;
 import CommServCli.Requete;
 
@@ -45,7 +45,14 @@ public class ThreadServer extends Thread{
 					 			"\nport : " + sockComm.getPort());
 			System.out.println("\n");
 			
-			// Boucle de communication avec un client
+			
+			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
+			ArrayList<P2PFile> listFileClient = (ArrayList<P2PFile>)ois.readObject();
+			Address clientAddress = new Address(sockInet.getHostAddress(), sockComm.getPort());
+			list.insert(listFileClient, clientAddress);
+			
+			
+			// -- Boucle de communication avec un client -- //
 			Requete request = null;
 			while((request = (Requete) ois.readObject()) != null) {
 				
@@ -62,6 +69,7 @@ public class ThreadServer extends Thread{
 			 System.out.println("Pb de communication " + e.toString());   
 		 }finally{
 			 System.out.println("\n == Fin de connexion avec le client : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
+			 list.remove(new Address(sockInet.getHostAddress(), sockComm.getPort()));
 		 }
 		
 	}
@@ -93,7 +101,6 @@ public class ThreadServer extends Thread{
 			}
 		
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
