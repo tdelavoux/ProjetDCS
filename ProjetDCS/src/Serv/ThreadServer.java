@@ -45,6 +45,9 @@ public class ThreadServer extends Thread{
 					 			"\nport : " + sockComm.getPort());
 			System.out.println("\n");
 			
+			list.printList();
+			
+			
 			
 			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
 			@SuppressWarnings("unchecked")

@@ -1,6 +1,8 @@
 package CommServCli;
 
-public class Address implements Comparable<Address>{
+import java.io.Serializable;
+
+public class Address implements Comparable<Address>, Serializable{
 	private String addressIp;
 	private int port;
 	

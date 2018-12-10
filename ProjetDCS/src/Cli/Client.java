@@ -67,8 +67,8 @@ public class Client {
 			oos.flush();
 
 			String s = "";
-
-			System.out.println("Connexion etablished with Server with adress :  " + comm.getLocalAddress() + ":" + comm.getLocalPort()+"\n");
+			Address myAddress = new Address(comm.getLocalAddress().toString(), comm.getLocalPort());
+			System.out.println("Connexion etablished with Server with adress :  " + myAddress +"\n");
 			
 			System.out.println("####### Welcome to P2P transfert software #######\n");
 			System.out.println("Possible Request : ");
@@ -91,23 +91,13 @@ public class Client {
 					Requete r = null;
 					try
 					{
-						r = new Requete(s.toLowerCase());
+						r = new Requete(s);
 						
 						if(r.getCommand().equals("quit")){
 							break;
 						}
 						else if(r.getCommand().equals("list")) {
-							System.out.println(" -- Current List  --");
-							
-							if(currentSearch == null) {
-								System.out.println("No current list. Use search to get list of file");
-							}
-							else {
-								int i = 0;
-								for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
-									System.out.println(i + ". "  + entry.getKey() + " -> " + entry.getValue());
-								}
-							}
+							getCurrentList(currentSearch, myAddress);
 							continue;
 						}
 						else if(r.getCommand().equals("local-list")) {
@@ -122,10 +112,15 @@ public class Client {
 						oos.writeObject(r);
 						oos.flush();
 						
-						if(r.getCommand().equals("search"))
+						if(r.getCommand().equals("search")) {
 							currentSearch = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
-						else if(r.getCommand().equals("get"))
+							getCurrentList(currentSearch, myAddress);
+						}
+						
+						else if(r.getCommand().equals("get")) {
 							currentGet = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
+							getCurrentList(currentGet, myAddress);
+						}
 						
 //						if(currentSearch == null)
 //							System.out.println("null");
@@ -167,6 +162,25 @@ public class Client {
 			}
 			System.out.println("\nThank's for using ! Come back Any Time");
 			System.out.println(" ---- Client has closed with success ----");
+		}
+	}
+	
+	
+	public static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress) {
+		System.out.println(" -- Current List  --");
+		
+		if(currentSearch == null) {
+			System.out.println("No current list. Use search to get list of file");
+		}
+		else {
+			int i = 0;
+			for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
+				System.out.println(i + ". "  + entry.getKey() + " : ");
+				for(Address add : entry.getValue()) {
+					System.out.println("\t" + add);
+				}
+				++i;
+			}
 		}
 	}
 }

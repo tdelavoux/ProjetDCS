@@ -67,13 +67,27 @@ public class ListFileServer {
 		public synchronized LinkedHashMap<P2PFile, TreeSet<Address>> getListAddressSearch (String toSearch){
 			LinkedHashMap<P2PFile, TreeSet<Address>> res = new LinkedHashMap<>();
 			
+			System.out.println("Recherche en cours ... ");
+			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
 			{
+				System.out.println(entry.getKey().getName().toLowerCase() + "  " + toSearch.toLowerCase());
 				if(entry.getKey().getName().contains(toSearch))
 				{
 					res.put(entry.getKey(), entry.getValue());
 				}
 			}
+			
+			for(Map.Entry<P2PFile, TreeSet<Address>> entry : res.entrySet())
+			{
+				System.out.println(entry.getKey());
+				for(Address a : entry.getValue())
+				{
+					System.out.println("\t" + a);
+				}
+			}
+			
+			
 			return res;
 		}
 		

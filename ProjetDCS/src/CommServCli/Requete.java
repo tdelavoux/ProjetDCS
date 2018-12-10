@@ -8,6 +8,7 @@ public class Requete implements Serializable {
 	
 	public Requete(String line) throws RequestFormationException{
 		String[] requestTab = line.split(" ");
+		requestTab[0] = requestTab[0].toLowerCase();
 		
 		if(!verifyContent(requestTab)) 
 			throw new RequestFormationException("Nombre d'arguments invalides");
