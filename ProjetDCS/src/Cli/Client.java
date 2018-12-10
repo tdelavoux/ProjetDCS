@@ -2,6 +2,7 @@ package Cli;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.TreeSet;
 
@@ -12,6 +13,7 @@ public class Client {
 	public static void main(String[] args) {
 		if(args.length != 3)
 		{
+			System.out.println("Erreur");
 			System.exit(1);
 		}
 
@@ -32,6 +34,13 @@ public class Client {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		BufferedReader br = null;
+		
+		File directory = new File(args[2]);
+		
+		if(!(directory.exists() && directory.isDirectory()))
+		{
+			System.out.println("Erreur");
+		}
 
 		try
 		{
@@ -42,6 +51,22 @@ public class Client {
 			ois = new ObjectInputStream(comm.getInputStream());
 			
 			br = new BufferedReader(new InputStreamReader(System.in));
+			
+			File [] listFile = directory.listFiles();
+			ArrayList<P2PFile> list = new ArrayList<P2PFile>();
+			
+			for(File file : listFile)
+			{
+				list.add(new P2PFile(file.length(),file.getName().replaceAll(args[2] + "/","")));
+			}
+			
+			/*for(P2PFile p : list)
+			{
+				System.out.println(p);
+			}*/
+			
+			oos.writeObject(list);
+			oos.flush();
 
 			String s = "";
 

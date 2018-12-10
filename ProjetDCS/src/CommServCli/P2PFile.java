@@ -1,6 +1,8 @@
 package CommServCli;
 
-public class P2PFile {
+import java.io.Serializable;
+
+public class P2PFile implements Serializable {
 	private long size;
 	private String name;
 	
