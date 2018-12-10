@@ -60,5 +60,8 @@ public class Address implements Comparable<Address>{
 		return 0;
 	}
 	
-	
+	public String toString()
+	{
+		return addressIp + ":" + port;
+	}
 }

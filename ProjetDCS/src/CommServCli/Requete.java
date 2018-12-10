@@ -7,16 +7,17 @@ public class Requete implements Serializable {
 	private String argument;
 	
 	public Requete(String line) throws RequestFormationException{
-		String[] requestTab = line.split(" "); 
-		requestTab[1].replace(" " ,"\"");
-		
-		
+		String[] requestTab = line.split(" ");
 		
 		if(!verifyContent(requestTab)) 
 			throw new RequestFormationException("Nombre d'arguments invalides");
 		
 		this.command  = requestTab[0];
-		this.argument = requestTab[1];
+		
+		if(requestTab.length == 2) {
+			requestTab[1].replace(" " ,"\"");
+			this.argument = requestTab[1];
+		}
 	}
 	
 	/**

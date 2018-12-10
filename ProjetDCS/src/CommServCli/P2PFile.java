@@ -41,5 +41,8 @@ public class P2PFile {
 		return true;
 	}
 	
-	
+	public String toString()
+	{
+		return name + " (" + size + ")";
+	}
 }

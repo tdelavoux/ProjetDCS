@@ -2,6 +2,9 @@ package Cli;
 
 import java.io.*;
 import java.net.*;
+import java.util.LinkedHashMap;
+import java.util.TreeSet;
+
 import CommServCli.*;
 
 public class Client {
@@ -17,11 +20,11 @@ public class Client {
 			portServ = Integer.parseInt(args[1]);
 		}
 		catch (NumberFormatException e) {
-			System.out.println("Numéro de port non valide !");
+			System.out.println("Numï¿½ro de port non valide !");
 			System.exit(1);
 		}
  		if ( portServ < 1024 || portServ > 65535 ){
-			System.out.println("Numéro de port non autorisé ou non valide !");
+			System.out.println("Numï¿½ro de port non autorisï¿½ ou non valide !");
 			System.exit(1);
 		}
 
@@ -51,9 +54,25 @@ public class Client {
 
 				if(!s.equals(""))
 				{
-					oos.writeObject(new Requete(s));
-					oos.flush();
-					
+					Requete r = null;
+					try
+					{
+						r = new Requete(s);
+						oos.writeObject(r);
+						oos.flush();
+						
+						LinkedHashMap<P2PFile,TreeSet<Address>> t = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
+						
+						if(t == null)
+							System.out.println("null");
+						else
+							System.out.println("Pas null");
+					}
+					catch(RequestFormationException e)
+					{
+						e.printStackTrace();
+						continue;
+					}	
  				}
 
 			}while(!s.equals(""));
@@ -62,7 +81,7 @@ public class Client {
 		{
 			e.printStackTrace();
 		}
-		catch(RequestFormationException e)
+		catch(ClassNotFoundException e) 
 		{
 			e.printStackTrace();
 		}

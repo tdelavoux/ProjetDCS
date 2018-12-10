@@ -98,4 +98,15 @@ public class ListFileServer {
 			return list;
 		}
 		
+		public void printList()
+		{
+			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
+			{
+				System.out.println(entry.getKey());
+				for(Address a : entry.getValue())
+				{
+					System.out.println("\t" + a);
+				}
+			}
+		}
 }
