@@ -1,10 +1,8 @@
 package Serv;
 
-//Usage java Serveur portServeur
-
+//Usage java Server portServeur
 import java.net.*; 
 import java.io.*; 
-import Serv.ListFileServer;
 
 public class Server { 
 

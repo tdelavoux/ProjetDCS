@@ -47,10 +47,11 @@ public class ThreadServer extends Thread{
 			
 			
 			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
+			@SuppressWarnings("unchecked")
 			ArrayList<P2PFile> listFileClient = (ArrayList<P2PFile>)ois.readObject();
 			Address clientAddress = new Address(sockInet.getHostAddress(), sockComm.getPort());
 			list.insert(listFileClient, clientAddress);
-			
+
 			
 			// -- Boucle de communication avec un client -- //
 			Requete request = null;
@@ -98,10 +99,17 @@ public class ThreadServer extends Thread{
 			}
 			else {
 				System.out.println("Erreur, commande impossible à traiter par le serveur");
+				oos.writeObject(null);
 			}
 		
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				oos.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
