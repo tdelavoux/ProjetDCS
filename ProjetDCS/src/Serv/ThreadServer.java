@@ -53,7 +53,8 @@ public class ThreadServer extends Thread{
 			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
 			@SuppressWarnings("unchecked")
 			ArrayList<P2PFile> listFileClient = (ArrayList<P2PFile>)ois.readObject();
-			Address clientAddress = new Address(sockInet.getHostAddress(), sockComm.getPort());
+			
+			Address clientAddress = (Address)ois.readObject();
 			list.insert(listFileClient, clientAddress);
 
 			

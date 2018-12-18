@@ -38,10 +38,11 @@ public class Client {
  		String pathFile = args[2].replace('\\', '/');
 
 		Socket comm = null;
-		ServerSocket sockClient = null;
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		BufferedReader br = null;
+		
+		ServerSocket connClient = null;
 		
 		
 		File directory = new File(pathFile);
@@ -53,7 +54,11 @@ public class Client {
 		try{
 			String ipServ = args[0];
 			comm = new Socket(ipServ,portServ);
-			sockClient = new ServerSocket(comm.getLocalPort());
+			
+			connClient = new ServerSocket(0);
+			ThreadClient tc = new ThreadClient(connClient);
+			tc.start();
+			
 			
 
 			oos = new ObjectOutputStream(comm.getOutputStream());
@@ -73,11 +78,14 @@ public class Client {
 			
 			
 			oos.writeObject(list);
+			System.out.println(comm.getLocalAddress().toString());
+			oos.writeObject(new Address(comm.getLocalAddress().toString().replaceAll("/", ""), connClient.getLocalPort()));
 			oos.flush();
 
 			String s = "";
-			Address myAddress = new Address(comm.getLocalAddress().toString(), comm.getLocalPort());
-			System.out.println("Connexion etablished with Server with adress :  " + myAddress +"\n");
+			Address myAddress = new Address(connClient.getLocalSocketAddress().toString(), connClient.getLocalPort());
+			System.out.println("Connexion etablished with Server with adress :  " + comm.getLocalAddress().toString() + comm.getLocalPort() +"\n");
+			
 			
 			System.out.println("####### Welcome to P2P transfert software #######\n");
 			System.out.println("Possible Request : ");
@@ -89,9 +97,8 @@ public class Client {
 
 			do
 			{
-				Socket commClient = sockClient.accept();
-				//ThreadSender t = new ThreadSender ();     
-				//t.start(); 
+			
+				
 				
 				System.out.println(" --- Enter a request  ---\n");
 				System.out.print(">>> ");
@@ -193,13 +200,34 @@ public class Client {
 		}
 		else {
 			int i = 0;
+			Address test = null;
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
 				System.out.println(i + ". "  + entry.getKey() + " : ");
+				
 				for(Address add : entry.getValue()) {
 					System.out.println("\t" + add);
+					test = add;
 				}
 				++i;
 			}
+			
+			if(!test.equals(myAddress)) {
+				
+				try {
+					Socket s = new Socket(test.getAddressIp(), test.getPort());
+					ObjectOutputStream ois = new ObjectOutputStream(s.getOutputStream());
+					
+					ois.writeObject(new String("hello"));
+	
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} finally {
+					
+				}
+			}
+				
+			
 		}
 	}
 }
