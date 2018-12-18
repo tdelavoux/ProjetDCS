@@ -122,7 +122,10 @@ public class Client {
 						
 						else if(r.getCommand().equals("get")) {
 							currentGet = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
-							getCurrentList(currentGet, myAddress);
+							if(!verifyAlreadyGet(currentGet, myAddress))
+								getCurrentList(currentGet, myAddress);
+							else
+								System.out.println("You already Own this file\n\n");
 						}
 						
 //						if(currentSearch == null)
@@ -166,8 +169,18 @@ public class Client {
 		}
 	}
 	
+	private static boolean verifyAlreadyGet(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress){
+		for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
 	
-	public static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress) {
+			for(Address add : entry.getValue()) {
+				if(add.equals(myAddress))
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	private static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress) {
 		System.out.println(" -- Current List  --");
 		
 		if(currentSearch == null) {

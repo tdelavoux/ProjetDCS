@@ -97,10 +97,13 @@ public class ListFileServer {
 		 * @param searched P2PFile 	Fichier a telecharger
 		 * @return P2Pfile et TreeSet<Address>  Liste des adresses qui ont le fichier, null si aucune adresse existante
 		 */
-		public synchronized TreeSet<Address> getListAddressDownload (P2PFile searched){
+		public synchronized LinkedHashMap<P2PFile, TreeSet<Address>> getListAddressDownload (P2PFile searched){
 			LinkedHashMap<P2PFile, TreeSet<Address>> res = new LinkedHashMap<>();
-			if(list.containsKey(searched))
-				return res.put(searched, this.list.get(searched));
+			if(list.containsKey(searched)) {
+				System.out.println(searched);
+				res.put(searched, this.list.get(searched));
+				return res;
+			}
 			
 			return null;
 		}

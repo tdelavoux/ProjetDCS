@@ -95,10 +95,14 @@ public class ThreadServer extends Thread{
 				oos.writeObject(currentList);
 			}
 			else if(request.getCommand().equals("get")) {
-				int i = 1;
+				int i = 0;
 				for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.getList().entrySet()) {
-					if (i == Integer.parseInt(request.getArgument()))
+					if (i == Integer.parseInt(request.getArgument())) {
+							
 							oos.writeObject(list.getListAddressDownload(entry.getKey()));
+							oos.flush();
+							break;
+					}
 					i++;
 				}
 				
