@@ -11,7 +11,7 @@ public class Requete implements Serializable {
 		requestTab[0] = requestTab[0].toLowerCase();
 		
 		if(!verifyContent(requestTab)) 
-			throw new RequestFormationException("Nombre d'arguments invalides");
+			throw new RequestFormationException("Invalid Request length");
 		
 		this.command  = requestTab[0];
 		
@@ -48,7 +48,7 @@ public class Requete implements Serializable {
 		   || (taille != 2 && (requete[0].equals("search") || requete[0].equals("get")))
 		   || (taille != 1 && (!requete[0].equals("search") && !requete[0].equals("get")))) {
 			 
-				System.out.println("Reponse : Erreur, nombre de paramètres incohérent");
+				System.out.println("Answer : Error, incoherent parameters");
 				return false;
 		 }
 		 return true;
@@ -64,7 +64,7 @@ public class Requete implements Serializable {
 		 String[] T = {"search", "get", "list", "local-list", "quit"};
 
 		 if(!compareStrings(T, requete[0])) {
-			 System.out.println("Reponse : Erreur, Commande innexistante");
+			 System.out.println("Answer : Error, command do not exist");
 			 return false;
 		 } 
 		 return true;

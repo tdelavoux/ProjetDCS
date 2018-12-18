@@ -67,7 +67,7 @@ public class ListFileServer {
 		public synchronized LinkedHashMap<P2PFile, TreeSet<Address>> getListAddressSearch (String toSearch){
 			LinkedHashMap<P2PFile, TreeSet<Address>> res = new LinkedHashMap<>();
 			
-			System.out.println("Recherche en cours ... ");
+			System.out.println("Search in progress ... ");
 			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
 			{

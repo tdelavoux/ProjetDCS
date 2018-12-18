@@ -21,11 +21,11 @@ public class Server {
 				portServ = Integer.parseInt(args[0]);
 			}
 			catch(NumberFormatException e){
-				System.out.println("Numéro de port non valide.");
+				System.out.println("Invalid port Number");
 				System.exit(1);
 			}
 			if ( portServ < 1024 || portServ > 65535 ){
-				System.out.println("Numéro de port non autorisé ou non valide.");
+				System.out.println("Forbidden port Number");
 				System.exit(2);
 			}
 		
@@ -39,7 +39,7 @@ public class Server {
 				t.start();    
 			}   
 		}catch(IOException e) {    
-			System.out.println("Problème de connexion client : "+e.toString());   
+			System.out.println("Error with client connexion : "+e.toString());   
 		}finally{
 			if (conn != null){
 				try {

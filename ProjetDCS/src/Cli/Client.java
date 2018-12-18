@@ -1,3 +1,5 @@
+//ByteArrayOutputStream
+//ByteArrayInputStream
 package Cli;
 
 import java.io.*;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import CommServCli.*;
+import Serv.ThreadServer;
 
 public class Client {
 
@@ -24,17 +27,18 @@ public class Client {
 			portServ = Integer.parseInt(args[1]);
 		}
 		catch (NumberFormatException e) {
-			System.out.println("Numero de port non valide !");
+			System.out.println("Invalid port Number");
 			System.exit(1);
 		}
  		if ( portServ < 1024 || portServ > 65535 ){
-			System.out.println("Numero de port non autorise ou non valide !");
+			System.out.println("Forbidden port Number");
 			System.exit(1);
 		}
  		
  		String pathFile = args[2].replace('\\', '/');
 
 		Socket comm = null;
+		ServerSocket sockClient = null;
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		BufferedReader br = null;
@@ -49,6 +53,8 @@ public class Client {
 		try{
 			String ipServ = args[0];
 			comm = new Socket(ipServ,portServ);
+			sockClient = new ServerSocket(comm.getLocalPort());
+			
 
 			oos = new ObjectOutputStream(comm.getOutputStream());
 			ois = new ObjectInputStream(comm.getInputStream());
@@ -83,6 +89,9 @@ public class Client {
 
 			do
 			{
+				Socket commClient = sockClient.accept();
+				//ThreadSender t = new ThreadSender ();     
+				//t.start(); 
 				
 				System.out.println(" --- Enter a request  ---\n");
 				System.out.print(">>> ");
@@ -128,10 +137,6 @@ public class Client {
 								System.out.println("You already Own this file\n\n");
 						}
 						
-//						if(currentSearch == null)
-//							System.out.println("null");
-//						else
-//							System.out.println("Pas null");
 					}
 					catch(RequestFormationException e)
 					{
