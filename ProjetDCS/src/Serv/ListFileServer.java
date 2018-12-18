@@ -71,8 +71,8 @@ public class ListFileServer {
 			
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.entrySet())
 			{
-				System.out.println(entry.getKey().getName().toLowerCase() + "  " + toSearch.toLowerCase());
-				if(entry.getKey().getName().contains(toSearch))
+				//System.out.println(entry.getKey().getName().toLowerCase() + "  " + toSearch.toLowerCase());
+				if(entry.getKey().getName().toLowerCase().contains(toSearch.toLowerCase()))
 				{
 					res.put(entry.getKey(), entry.getValue());
 				}

@@ -14,7 +14,8 @@ public class Client {
 	public static void main(String[] args) {
 		if(args.length != 3)
 		{
-			System.out.println("Erreur");
+			System.out.println("Error, wrong argument's number");
+			System.out.println("Usage : java Client ipServ NumPort pathFile");
 			System.exit(1);
 		}
 
@@ -30,6 +31,8 @@ public class Client {
 			System.out.println("Numero de port non autorise ou non valide !");
 			System.exit(1);
 		}
+ 		
+ 		String pathFile = args[2].replace('\\', '/');
 
 		Socket comm = null;
 		ObjectOutputStream oos = null;
@@ -37,7 +40,7 @@ public class Client {
 		BufferedReader br = null;
 		
 		
-		File directory = new File(args[2]);
+		File directory = new File(pathFile);
 		
 		if(!(directory.exists() && directory.isDirectory())){
 			System.out.println("Error, the Directory do not exist or is not a Directory ");
@@ -59,7 +62,7 @@ public class Client {
 			
 			for(File file : listFile){
 				if(file.isFile())
-					list.add(new P2PFile(file.length(),file.getName().replaceAll(args[2] + "/","")));
+					list.add(new P2PFile(file.length(),file.getName().replaceAll(pathFile + "/","")));
 			}
 			
 			
@@ -129,20 +132,18 @@ public class Client {
 					}
 					catch(RequestFormationException e)
 					{
-						e.printStackTrace();
+						System.out.println("Error, Invalid argument");
 						continue;
 					}	
  				}
 
 			}while(!s.equals(""));
-		}
-		catch(IOException e)
-		{
+		
+		}catch(ClassNotFoundException e) {
 			e.printStackTrace();
-		}
-		catch(ClassNotFoundException e) 
-		{
+		}catch(IOException e){
 			e.printStackTrace();
+		
 		}finally {
 			try {
 				if(oos != null) 

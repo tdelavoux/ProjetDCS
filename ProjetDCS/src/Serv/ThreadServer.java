@@ -1,4 +1,5 @@
 package Serv;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,10 +39,10 @@ public class ThreadServer extends Thread{
 			ois =  new ObjectInputStream(sockComm.getInputStream());
 			
 			 /*  ---------   Init Connection-------------------   */
-			System.out.println(" \n=====  Connection établie avec  =====\n");
+			System.out.println(" \n=====  Connexion etablished with  =====\n");
 			
 			sockInet = sockComm.getInetAddress();
-			System.out.println("Adresse de socket = "+ sockInet.getHostAddress() + 
+			System.out.println("Socket Address = "+ sockInet.getHostAddress() + 
 					 			"\nport : " + sockComm.getPort());
 			System.out.println("\n");
 			
@@ -61,18 +62,20 @@ public class ThreadServer extends Thread{
 			while((request = (Requete) ois.readObject()) != null) {
 				
 				//Traitement de la requête reçue
-				System.out.println("Requête reçue !");
+				System.out.println("Request Received !");
 				requestProcessing(request, oos, list, currentList);
 			}
 
 		 }catch(SocketException e) {
-			 System.out.println("Déconnexion prématurée de la socket");
+			 System.out.println("Socket has disconnected");
 		 }catch (ClassNotFoundException e) {
-			 System.out.println("Erreur classe non trouvée !");
+			 System.out.println("Error, Class not found!");
+		 }catch (EOFException e) {
+			 System.out.println("Client has disconnected prematurly");
 		 }catch(IOException e) {    
-			 System.out.println("Pb de communication " + e.toString());   
+			 System.out.println("Critical Error " + e.toString());   
 		 }finally{
-			 System.out.println("\n == Fin de connexion avec le client : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
+			 System.out.println("\n == Client disconnected : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
 			 list.remove(new Address(sockInet.getHostAddress(), sockComm.getPort()));
 		 }
 		
@@ -101,7 +104,7 @@ public class ThreadServer extends Thread{
 				
 			}
 			else {
-				System.out.println("Erreur, commande impossible à traiter par le serveur");
+				System.out.println("Error, Request unable to be processed by Server");
 				oos.writeObject(null);
 			}
 		
