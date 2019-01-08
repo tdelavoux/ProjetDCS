@@ -28,8 +28,11 @@ public class ThreadClient extends Thread{
 			
 			System.out.println("recieved " + request);
 			
+
 			ThreadSender ts = new ThreadSender(request,pathFile);
 			ts.start();
+		
+				
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -37,5 +40,18 @@ public class ThreadClient extends Thread{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	// Fermeture du Thread
+	public void exit() {
+		if(comm != null) {
+			try {
+				comm.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.exit(0);
 	}
 }

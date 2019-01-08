@@ -29,9 +29,15 @@ public class ThreadServer extends Thread{
 	
 	public void run() {
 		
+		
+		
 		InetAddress sockInet = null;
 		ObjectInputStream ois = null;   
 		ObjectOutputStream oos = null;  
+		Address clientAddress = null;
+		
+		System.out.println("Server is Avaiable with address : ");
+		System.out.println(new Address(sockComm.getLocalAddress().toString().replaceAll("/", ""), sockComm.getLocalPort()));
 		
 		try {
 			
@@ -46,15 +52,12 @@ public class ThreadServer extends Thread{
 					 			"\nport : " + sockComm.getPort());
 			System.out.println("\n");
 			
-			list.printList();
-			
-			
 			
 			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
 			@SuppressWarnings("unchecked")
 			ArrayList<P2PFile> listFileClient = (ArrayList<P2PFile>)ois.readObject();
 			
-			Address clientAddress = (Address)ois.readObject();
+			clientAddress = (Address)ois.readObject();
 			list.insert(listFileClient, clientAddress);
 
 			
@@ -77,7 +80,7 @@ public class ThreadServer extends Thread{
 			 System.out.println("Critical Error " + e.toString());   
 		 }finally{
 			 System.out.println("\n == Client disconnected : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
-			 list.remove(new Address(sockInet.getHostAddress(), sockComm.getPort()));
+			 list.remove(clientAddress);
 		 }
 		
 	}
@@ -98,13 +101,21 @@ public class ThreadServer extends Thread{
 			else if(request.getCommand().equals("get")) {
 				int i = 0;
 				for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.getList().entrySet()) {
-					if (i == Integer.parseInt(request.getArgument())) {
-							
-							oos.writeObject(list.getListAddressDownload(entry.getKey()));
-							oos.flush();
-							break;
+					
+					try {
+						if (i == Integer.parseInt(request.getArgument())) {
+								
+								oos.writeObject(list.getListAddressDownload(entry.getKey()));
+								oos.flush();
+								break;
+						}
+						i++;
+					}catch(NumberFormatException e) {
+						System.out.println("Error not a number");
+						oos.writeObject(null);
+						oos.flush();
+						break;
 					}
-					i++;
 				}
 				
 			}

@@ -20,6 +20,7 @@ public class ThreadSender extends Thread{
 	{
 		tab = request.split("/");
 		this.pathFile = pathFile;
+
 	}
 	
 	public static void serialize(Object o,DatagramPacket pack) throws IOException

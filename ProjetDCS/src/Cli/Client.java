@@ -41,6 +41,8 @@ public class Client {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		BufferedReader br = null;
+		Address myAddress = null;
+		ThreadClient tc = null;
 		
 		ServerSocket connClient = null;
 		
@@ -52,11 +54,12 @@ public class Client {
 		}
 
 		try{
+			
 			String ipServ = args[0];
 			comm = new Socket(ipServ,portServ);
 			
 			connClient = new ServerSocket(0);
-			ThreadClient tc = new ThreadClient(connClient,pathFile);
+			tc = new ThreadClient(connClient,pathFile);
 			tc.start();
 
 			oos = new ObjectOutputStream(comm.getOutputStream());
@@ -77,12 +80,12 @@ public class Client {
 			
 			oos.writeObject(list);
 			
-			Address myAddress = new Address(comm.getLocalAddress().toString().replaceAll("/", ""), connClient.getLocalPort());
+			myAddress = new Address(comm.getLocalAddress().toString().replaceAll("/", ""), connClient.getLocalPort());
 			oos.writeObject(myAddress);
 			oos.flush();
 
 			String s = "";
-			System.out.println("Connexion etablished with Server with adress :  " + comm.getInetAddress().getHostAddress() + comm.getPort() +"\n");
+			System.out.println("Connexion etablished with Server with adress :  " + comm.getInetAddress().getHostAddress() + " " + comm.getPort() +"\n");
 			
 			
 			System.out.println("####### Welcome to P2P transfert software #######\n");
@@ -95,9 +98,7 @@ public class Client {
 
 			do
 			{
-			
-				
-				
+	
 				System.out.println(" --- Enter a request  ---\n");
 				System.out.print(">>> ");
 
@@ -135,7 +136,24 @@ public class Client {
 						}
 						
 						else if(r.getCommand().equals("get")) {
+							
+							try {
+								if(Integer.parseInt(r.getArgument()) > currentSearch.size()) {
+									System.out.println("Error, the number is out of range");
+									continue;
+								}
+							}catch(NumberFormatException e) {
+								System.out.println("Error, argument is not a number ! ");
+								continue;
+							}
+							
 							currentGet = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
+							
+							if(currentGet == null) {
+								System.out.println("Error as occured, list is empty");
+								continue;
+							}
+							
 							if(!verifyAlreadyGet(currentGet, myAddress)) {
 								getCurrentList(currentGet, myAddress);
 								f(currentGet, comm.getLocalAddress().toString(),pathFile);
@@ -159,7 +177,9 @@ public class Client {
 		}catch(IOException e){
 			e.printStackTrace();
 		
-		}finally {
+		}finally {			
+			
+			// ----- Close flux -------------------------------------------------------------- //
 			try {
 				if(oos != null) 
 					oos.close();
@@ -178,6 +198,8 @@ public class Client {
 			}
 			System.out.println("\nThank's for using ! Come back Any Time");
 			System.out.println(" ---- Client has closed with success ----");
+			
+			tc.exit();
 		}
 	}
 	
@@ -210,27 +232,6 @@ public class Client {
 				}
 				++i;
 			}
-			
-			/*if(!test.equals(myAddress)) {
-				
-				try {
-					Socket s = new Socket(test.getAddressIp(), test.getPort());
-					ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
-					System.out.print("Envoi");
-					
-					oos.writeObject(new String("hello"));
-					
-					ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-					System.out.println((String)ois.readObject());
-	
-				} catch (IOException | ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					
-				}
-			}*/
-				
 			
 		}
 	}
@@ -268,6 +269,7 @@ public class Client {
 				ThreadReceiver tr = new ThreadReceiver(ds,file.getName(),pathFile);
 				tr.start();
 				
+				
 				min += numPackCli;
 				i++;
 				
@@ -282,4 +284,5 @@ public class Client {
 			
 		}
 	}
+	
 }

@@ -56,6 +56,7 @@ public class ListFileServer {
 			{
 				list.remove(f);
 			}
+			
 		}
 		
 		

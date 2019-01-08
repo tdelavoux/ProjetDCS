@@ -17,6 +17,7 @@ public class ThreadReceiver extends Thread{
 		this.ds = ds;
 		this.fileName = fileName;
 		this.pathFile = pathFile;
+	
 	}
 	
 	public static Object deserialize(DatagramPacket pack) throws IOException
@@ -40,6 +41,7 @@ public class ThreadReceiver extends Thread{
 	
 	public void run()
 	{
+
 		byte[] buf = new byte[SIZE];
 		DatagramPacket pack = new DatagramPacket(buf,0,SIZE);
 		RandomAccessFile stream = null;
@@ -47,6 +49,7 @@ public class ThreadReceiver extends Thread{
 		
 		try
 		{
+			
 			stream = new RandomAccessFile(pathFile+"/"+fileName,"rw");
 			while(true)
 			{
@@ -68,5 +71,9 @@ public class ThreadReceiver extends Thread{
 				e1.printStackTrace();
 			}
 		}	
+	}
+	
+	public void exit() {
+		System.exit(0);
 	}
 }
