@@ -1,3 +1,5 @@
+//Delavoux Bleu
+
 package Cli;
 
 import java.io.ByteArrayOutputStream;
@@ -41,8 +43,9 @@ public class ThreadSender extends Thread{
 	
 	public void run()
 	{
+		DatagramSocket ts = null;
 		try {
-			DatagramSocket ts = new DatagramSocket();
+			ts = new DatagramSocket();
 			
 			byte[] buf = new byte[SIZE];
 			int i = 0, num = Integer.parseInt(tab[4]);
@@ -78,6 +81,10 @@ public class ThreadSender extends Thread{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		finally
+		{
+			ts.close();
 		}
 	}
 }

@@ -1,5 +1,5 @@
-//ByteArrayOutputStream
-//ByteArrayInputStream
+//Delavoux Bleu
+
 package Cli;
 
 import java.io.*;
@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import CommServCli.*;
-import Serv.ThreadServer;
 
 public class Client {
 
@@ -67,16 +66,9 @@ public class Client {
 			
 			br = new BufferedReader(new InputStreamReader(System.in));
 			
-			File [] listFile = directory.listFiles();
-			ArrayList<P2PFile> list = new ArrayList<P2PFile>();
+			ArrayList<P2PFile> list = getListFile(directory,pathFile);
 			LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch = null;
 			LinkedHashMap<P2PFile,TreeSet<Address>> currentGet = null;
-			
-			for(File file : listFile){
-				if(file.isFile())
-					list.add(new P2PFile(file.length(),file.getName().replaceAll(pathFile + "/","")));
-			}
-			
 			
 			oos.writeObject(list);
 			
@@ -115,10 +107,11 @@ public class Client {
 							break;
 						}
 						else if(r.getCommand().equals("list")) {
-							getCurrentList(currentSearch, myAddress);
+							getCurrentList(currentSearch);
 							continue;
 						}
 						else if(r.getCommand().equals("local-list")) {
+							list = getListFile(directory,pathFile);
 							System.out.println(" -- My Files  --");
 							for(P2PFile p : list){
 								System.out.println(p);
@@ -132,7 +125,7 @@ public class Client {
 						
 						if(r.getCommand().equals("search")) {
 							currentSearch = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
-							getCurrentList(currentSearch, myAddress);
+							getCurrentList(currentSearch);
 						}
 						
 						else if(r.getCommand().equals("get")) {
@@ -158,8 +151,8 @@ public class Client {
 							}
 							
 							if(!verifyAlreadyGet(currentGet, myAddress)) {
-								getCurrentList(currentGet, myAddress);
-								f(currentGet, comm.getLocalAddress().toString(),pathFile);
+								getCurrentList(currentGet);
+								requestUdp(currentGet, comm.getLocalAddress().toString(),pathFile);
 							}
 							else
 								System.out.println("You already Own this file\n\n");
@@ -206,6 +199,11 @@ public class Client {
 		}
 	}
 	
+	/**
+	 * Fonction qui permet de savoir si le client possède déjà le fichier
+	 * @param currentSearch liste des fichiers
+	 * @param myAddress		adresse du client
+	 */
 	private static boolean verifyAlreadyGet(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress){
 		for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
 	
@@ -217,7 +215,11 @@ public class Client {
 		return false;
 	}
 	
-	private static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress) {
+	/**
+	 * Fonction qui permet d'afficher la liste des fichiers
+	 * @param currentSearch liste des fichiers
+	 */
+	private static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch) {
 		System.out.println(" -- Current List  --");
 		
 		if(currentSearch == null) {
@@ -225,13 +227,11 @@ public class Client {
 		}
 		else {
 			int i = 0;
-			Address test = null;
 			for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentSearch.entrySet()) {
 				System.out.println(i + ". "  + entry.getKey() + " : ");
 				
 				for(Address add : entry.getValue()) {
 					System.out.println("\t" + add);
-					test = add;
 				}
 				++i;
 			}
@@ -239,7 +239,32 @@ public class Client {
 		}
 	}
 	
-	private static void f(LinkedHashMap<P2PFile,TreeSet<Address>> currentGet, String ip, String pathFile)
+	
+	/**
+	 * Fonction qui retourne la liste des fichiers présent dans un répertoire donné
+	 * @param directory		répertoire
+	 * @param pathFile		chemin vers le répertoire
+	 */
+	private static ArrayList<P2PFile> getListFile(File directory, String pathFile)
+	{
+		ArrayList<P2PFile> list = new ArrayList<P2PFile>();
+		File [] listFile = directory.listFiles();
+		
+		for(File file : listFile){
+			if(file.isFile())
+				list.add(new P2PFile(file.length(),file.getName().replaceAll(pathFile + "/","")));
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Fonction qui permet d'envoyer une requête aux clients afin d'avoir les morceaux du fichier désiré
+	 * @param currentGet	liste des adresses associé au fichier désiré
+	 * @param ip			adresse ip du client
+	 * @param pathFile		chemin vers le répertoire du client
+	 */
+	private static void requestUdp(LinkedHashMap<P2PFile,TreeSet<Address>> currentGet, String ip, String pathFile)
 	{
 		P2PFile file = null;
 		TreeSet<Address> cli = null;
@@ -284,7 +309,7 @@ public class Client {
 		}
 		catch(IOException e)
 		{
-			
+			e.printStackTrace();
 		}
 	}
 	

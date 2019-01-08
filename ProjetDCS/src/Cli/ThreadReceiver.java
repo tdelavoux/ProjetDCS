@@ -1,3 +1,5 @@
+//Delavoux Bleu
+
 package Cli;
 
 import java.io.ByteArrayInputStream;
@@ -33,9 +35,12 @@ public class ThreadReceiver extends Thread{
 		}
 		catch(ClassNotFoundException e)
 		{
-
+			e.printStackTrace();
 		}
-
+		
+		ois.close();
+		bais.close();
+		
 		return o;
 	}
 	
@@ -69,7 +74,20 @@ public class ThreadReceiver extends Thread{
 				e1.printStackTrace();
 			}
 			this.interrupt();
-		}	
+		}
+		finally
+		{
+			ds.close();
+			try {
+				if(stream != null)
+				{
+					stream.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void exit() {

@@ -1,3 +1,5 @@
+//Delavoux Bleu
+
 package Serv;
 import java.io.EOFException;
 import java.io.IOException;
@@ -19,17 +21,13 @@ public class ThreadServer extends Thread{
 	
 	private Socket sockComm = null;  
 	private ListFileServer list;
-	private LinkedHashMap<P2PFile, TreeSet<Address>> currentList;
 	
 	public ThreadServer(Socket sockComm, ListFileServer list) {
 		this.sockComm = sockComm;  
 		this.list = list;
-		this.currentList = new LinkedHashMap<>();
 	}
 	
 	public void run() {
-		
-		
 		
 		InetAddress sockInet = null;
 		ObjectInputStream ois = null;   
@@ -67,13 +65,7 @@ public class ThreadServer extends Thread{
 				
 				//Traitement de la requ�te re�ue
 				System.out.println("Request Received !");
-				
-				LinkedHashMap<P2PFile, TreeSet<Address>> currentSearch = null;
-				if(request.getCommand().equals("get"))
-				{
-					currentSearch = (LinkedHashMap<P2PFile, TreeSet<Address>>)ois.readObject();
-				}
-				requestProcessing(request, oos, list, currentSearch);
+				requestProcessing(request, oos, ois, list);
 			}
 
 		 }catch(SocketException e) {
@@ -82,24 +74,13 @@ public class ThreadServer extends Thread{
 			 System.out.println("Error, Class not found!");
 		 }catch (EOFException e) {
 			 System.out.println("Client has disconnected prematurly");
+			 list.remove(clientAddress);
 		 }catch(IOException e) {    
 			 System.out.println("Critical Error " + e.toString());   
 		 }finally{
 			 System.out.println("\n == Client disconnected : " + sockInet.getHostAddress() + "   port : " + sockComm.getPort() + " ==");
 			 list.remove(clientAddress);
 		 }
-		
-	}
-	
-	public static void printList(LinkedHashMap<P2PFile, TreeSet<Address>> currentList)
-	{
-		for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentList.entrySet()) {
-			System.out.println(entry.getKey());
-			for(Address a : entry.getValue())
-			{
-				System.out.println("\t" + a);
-			}
-		}
 	}
 	
 	/**
@@ -108,17 +89,19 @@ public class ThreadServer extends Thread{
 	 * @param oos
 	 * @param list
 	 */
-	public static void requestProcessing(Requete request , ObjectOutputStream oos, ListFileServer list, LinkedHashMap<P2PFile, TreeSet<Address>> currentList) {
+	public static void requestProcessing(Requete request , ObjectOutputStream oos, ObjectInputStream ois, ListFileServer list) {
 		
 		try {
 			if(request.getCommand().equals("search")) {
-				currentList = list.getListAddressSearch(request.getArgument());
+				LinkedHashMap<P2PFile, TreeSet<Address>> currentList = list.getListAddressSearch(request.getArgument());
 				oos.writeObject(currentList);
 			}
 			else if(request.getCommand().equals("get")) {
 				int i = 0;
 				
-				ListFileServer currentGet = new ListFileServer(currentList);
+				LinkedHashMap<P2PFile, TreeSet<Address>> currentSearch = (LinkedHashMap<P2PFile, TreeSet<Address>>)ois.readObject();
+				
+				ListFileServer currentGet = new ListFileServer(currentSearch);
 						
 				for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentGet.getList().entrySet()) {
 					if (i == Integer.parseInt(request.getArgument())) {
@@ -136,6 +119,9 @@ public class ThreadServer extends Thread{
 			}
 		
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
 			try {
