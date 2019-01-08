@@ -9,7 +9,7 @@ import java.net.DatagramSocket;
 
 public class ThreadReceiver extends Thread{
 	private DatagramSocket ds;
-	private final int SIZE = 1024;
+	private final int SIZE = 2000;
 	private String fileName, pathFile;
 	
 	public ThreadReceiver(DatagramSocket ds, String fileName, String pathFile)
@@ -41,35 +41,34 @@ public class ThreadReceiver extends Thread{
 	
 	public void run()
 	{
-
-		byte[] buf = new byte[SIZE];
-		DatagramPacket pack = new DatagramPacket(buf,0,SIZE);
+		byte[] buf = new byte[2000];
+		DatagramPacket pack = new DatagramPacket(buf,0,2000);
 		RandomAccessFile stream = null;
-		int cmp = 0;
-		
+				
 		try
 		{
 			
 			stream = new RandomAccessFile(pathFile+"/"+fileName,"rw");
 			while(true)
 			{
+				pack.setData(buf);
 				ds.receive(pack);
 				Pack p = (Pack)deserialize(pack);
 				stream.seek(p.getOffset());
 				
 				stream.write(p.getBuf());
-				cmp++;
 			}
 		}
 		catch(IOException e)
 		{
-			System.out.println("END " + cmp);
+			System.out.println("END ");
 			try {
 				stream.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			this.interrupt();
 		}	
 	}
 	

@@ -18,21 +18,21 @@ public class ThreadClient extends Thread{
 	
 	public void run() {
 		try {
-			comm = commClient.accept();
-			System.out.println("Waiting ... ");
-			
-			System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() + ":" + comm.getPort() );
-			ObjectInputStream ois = new ObjectInputStream(comm.getInputStream());
-			
-			String request = (String)ois.readObject();
-			
-			System.out.println("recieved " + request);
-			
-
-			ThreadSender ts = new ThreadSender(request,pathFile);
-			ts.start();
-		
+			while(true)
+			{
+				comm = commClient.accept();
+				System.out.println("Waiting ... ");
 				
+				System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() + ":" + comm.getPort() );
+				ObjectInputStream ois = new ObjectInputStream(comm.getInputStream());
+				
+				String request = (String)ois.readObject();
+				
+				System.out.println("recieved " + request);
+				
+				ThreadSender ts = new ThreadSender(request,pathFile);
+				ts.start();
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();

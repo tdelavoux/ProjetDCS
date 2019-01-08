@@ -15,6 +15,10 @@ public class ListFileServer {
 			this.list = new LinkedHashMap<>();
 		}
 		
+		public ListFileServer(LinkedHashMap<P2PFile, TreeSet<Address>> list) {
+			this.list = list;
+		}
+		
 		/**
 		 * Insertion d'une file de Fichier à la connexion d'un client
 		 * @param toInsert Liste des fichiers ïà insérer

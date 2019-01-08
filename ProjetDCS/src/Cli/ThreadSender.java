@@ -47,7 +47,7 @@ public class ThreadSender extends Thread{
 			byte[] buf = new byte[SIZE];
 			int i = 0, num = Integer.parseInt(tab[4]);
 			
-			DatagramPacket pack = new DatagramPacket(buf,SIZE,InetAddress.getByName(tab[0]),Integer.parseInt(tab[1]));
+			DatagramPacket pack = new DatagramPacket(new byte[2000],2000,InetAddress.getByName(tab[0]),Integer.parseInt(tab[1]));
 			
 			RandomAccessFile stream = new RandomAccessFile(pathFile+"/"+tab[2],"r");
 			stream.seek(Integer.parseInt(tab[4])*1024);
@@ -61,6 +61,7 @@ public class ThreadSender extends Thread{
 			}
 			stream.close();
 			ts.close();
+			this.interrupt();
 			
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block

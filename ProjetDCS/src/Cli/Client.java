@@ -147,6 +147,9 @@ public class Client {
 								continue;
 							}
 							
+							oos.writeObject(currentSearch);
+							oos.flush();
+							
 							currentGet = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
 							
 							if(currentGet == null) {

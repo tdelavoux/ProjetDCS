@@ -53,7 +53,7 @@ public class ThreadServer extends Thread{
 			System.out.println("\n");
 			
 			
-			// --- Réception de la liste des fichiers stocké en local par le client et mise a jour de la ListFileServer ---//
+			// --- Rï¿½ception de la liste des fichiers stockï¿½ en local par le client et mise a jour de la ListFileServer ---//
 			@SuppressWarnings("unchecked")
 			ArrayList<P2PFile> listFileClient = (ArrayList<P2PFile>)ois.readObject();
 			
@@ -65,9 +65,15 @@ public class ThreadServer extends Thread{
 			Requete request = null;
 			while((request = (Requete) ois.readObject()) != null) {
 				
-				//Traitement de la requête reçue
+				//Traitement de la requï¿½te reï¿½ue
 				System.out.println("Request Received !");
-				requestProcessing(request, oos, list, currentList);
+				
+				LinkedHashMap<P2PFile, TreeSet<Address>> currentSearch = null;
+				if(request.getCommand().equals("get"))
+				{
+					currentSearch = (LinkedHashMap<P2PFile, TreeSet<Address>>)ois.readObject();
+				}
+				requestProcessing(request, oos, list, currentSearch);
 			}
 
 		 }catch(SocketException e) {
@@ -85,8 +91,19 @@ public class ThreadServer extends Thread{
 		
 	}
 	
+	public static void printList(LinkedHashMap<P2PFile, TreeSet<Address>> currentList)
+	{
+		for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentList.entrySet()) {
+			System.out.println(entry.getKey());
+			for(Address a : entry.getValue())
+			{
+				System.out.println("\t" + a);
+			}
+		}
+	}
+	
 	/**
-	 * Fonction de traitement de la requête envoyée par le client, 
+	 * Fonction de traitement de la requï¿½te envoyï¿½e par le client, 
 	 * @param request
 	 * @param oos
 	 * @param list
@@ -100,24 +117,18 @@ public class ThreadServer extends Thread{
 			}
 			else if(request.getCommand().equals("get")) {
 				int i = 0;
-				for(Map.Entry<P2PFile, TreeSet<Address>> entry : list.getList().entrySet()) {
-					
-					try {
-						if (i == Integer.parseInt(request.getArgument())) {
-								
-								oos.writeObject(list.getListAddressDownload(entry.getKey()));
-								oos.flush();
-								break;
-						}
-						i++;
-					}catch(NumberFormatException e) {
-						System.out.println("Error not a number");
-						oos.writeObject(null);
-						oos.flush();
-						break;
-					}
-				}
 				
+				ListFileServer currentGet = new ListFileServer(currentList);
+						
+				for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentGet.getList().entrySet()) {
+					if (i == Integer.parseInt(request.getArgument())) {
+							
+							oos.writeObject(currentGet.getListAddressDownload(entry.getKey()));
+							oos.flush();
+							break;
+					}
+					i++;
+				}	
 			}
 			else {
 				System.out.println("Error, Request unable to be processed by Server");

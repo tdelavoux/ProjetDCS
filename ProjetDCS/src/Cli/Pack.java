@@ -14,4 +14,9 @@ public class Pack implements Serializable{
 	
 	public long getOffset() { return offset; }
 	public byte[] getBuf() { return buf; }
+	
+	public int getLength()
+	{
+		return buf.length + Long.toString(offset).length();
+	}
 }
