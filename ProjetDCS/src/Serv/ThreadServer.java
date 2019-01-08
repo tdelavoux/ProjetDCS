@@ -87,6 +87,7 @@ public class ThreadServer extends Thread{
 	 * Fonction de traitement de la requ�te envoy�e par le client, 
 	 * @param request
 	 * @param oos
+	 * @param ois
 	 * @param list
 	 */
 	public static void requestProcessing(Requete request , ObjectOutputStream oos, ObjectInputStream ois, ListFileServer list) {

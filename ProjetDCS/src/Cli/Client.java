@@ -95,7 +95,8 @@ public class Client {
 				System.out.print(">>> ");
 
 				s = br.readLine();
-
+				
+				/*  ---------   Gestion des requetes -------------------   */
 				if(!s.trim().equals(""))
 				{
 					Requete r = null;
@@ -103,13 +104,16 @@ public class Client {
 					{
 						r = new Requete(s);
 						
+						/*  ---------   Requete quit -------------------   */
 						if(r.getCommand().equals("quit")){
 							break;
 						}
+						/*  ---------   Requete list -------------------   */
 						else if(r.getCommand().equals("list")) {
 							getCurrentList(currentSearch);
 							continue;
 						}
+						/*  ---------   Requete local-list -------------------   */
 						else if(r.getCommand().equals("local-list")) {
 							list = getListFile(directory,pathFile);
 							System.out.println(" -- My Files  --");
@@ -123,11 +127,12 @@ public class Client {
 						oos.writeObject(r);
 						oos.flush();
 						
+						/*  ---------   Requete search -------------------   */
 						if(r.getCommand().equals("search")) {
 							currentSearch = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
 							getCurrentList(currentSearch);
 						}
-						
+						/*  ---------   Requete get -------------------   */
 						else if(r.getCommand().equals("get")) {
 							
 							try {

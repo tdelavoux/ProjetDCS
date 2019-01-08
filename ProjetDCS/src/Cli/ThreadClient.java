@@ -23,14 +23,14 @@ public class ThreadClient extends Thread{
 			while(true)
 			{
 				comm = commClient.accept();
-				System.out.println("Waiting ... ");
+				/*System.out.println("Waiting ... ");
 				
-				System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() + ":" + comm.getPort() );
+				System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() + ":" + comm.getPort() );*/
 				ObjectInputStream ois = new ObjectInputStream(comm.getInputStream());
 				
 				String request = (String)ois.readObject();
 				
-				System.out.println("recieved " + request);
+				//System.out.println("recieved " + request);
 				
 				ThreadSender ts = new ThreadSender(request,pathFile);
 				ts.start();
