@@ -9,10 +9,11 @@ import java.net.Socket;
 public class ThreadClient extends Thread{
 	Socket comm;
 	ServerSocket commClient;
+	String pathFile;
 	
-	public ThreadClient(ServerSocket commClient) {
+	public ThreadClient(ServerSocket commClient,String pathFile) {
 		this.commClient = commClient;
-		
+		this.pathFile = pathFile;
 	}
 	
 	public void run() {
@@ -20,12 +21,16 @@ public class ThreadClient extends Thread{
 			comm = commClient.accept();
 			System.out.println("Waiting ... ");
 			
-			System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() +  comm.getPort() );
+			System.out.println("Connexion du client : " + comm.getInetAddress().getHostAddress() + ":" + comm.getPort() );
 			ObjectInputStream ois = new ObjectInputStream(comm.getInputStream());
 			
-			String s = (String)ois.readObject();
+			String request = (String)ois.readObject();
 			
-			System.out.println("recieved " +s); 
+			System.out.println("recieved " + request);
+			
+			ThreadSender ts = new ThreadSender(request,pathFile);
+			ts.start();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

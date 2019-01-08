@@ -56,10 +56,8 @@ public class Client {
 			comm = new Socket(ipServ,portServ);
 			
 			connClient = new ServerSocket(0);
-			ThreadClient tc = new ThreadClient(connClient);
+			ThreadClient tc = new ThreadClient(connClient,pathFile);
 			tc.start();
-			
-			
 
 			oos = new ObjectOutputStream(comm.getOutputStream());
 			ois = new ObjectInputStream(comm.getInputStream());
@@ -78,13 +76,13 @@ public class Client {
 			
 			
 			oos.writeObject(list);
-			System.out.println(comm.getLocalAddress().toString());
-			oos.writeObject(new Address(comm.getLocalAddress().toString().replaceAll("/", ""), connClient.getLocalPort()));
+			
+			Address myAddress = new Address(comm.getLocalAddress().toString().replaceAll("/", ""), connClient.getLocalPort());
+			oos.writeObject(myAddress);
 			oos.flush();
 
 			String s = "";
-			Address myAddress = new Address(connClient.getLocalSocketAddress().toString(), connClient.getLocalPort());
-			System.out.println("Connexion etablished with Server with adress :  " + comm.getLocalAddress().toString() + comm.getLocalPort() +"\n");
+			System.out.println("Connexion etablished with Server with adress :  " + comm.getInetAddress().getHostAddress() + comm.getPort() +"\n");
 			
 			
 			System.out.println("####### Welcome to P2P transfert software #######\n");
@@ -138,8 +136,10 @@ public class Client {
 						
 						else if(r.getCommand().equals("get")) {
 							currentGet = (LinkedHashMap<P2PFile,TreeSet<Address>>)ois.readObject();
-							if(!verifyAlreadyGet(currentGet, myAddress))
+							if(!verifyAlreadyGet(currentGet, myAddress)) {
 								getCurrentList(currentGet, myAddress);
+								f(currentGet, comm.getLocalAddress().toString(),pathFile);
+							}
 							else
 								System.out.println("You already Own this file\n\n");
 						}
@@ -186,10 +186,10 @@ public class Client {
 	
 			for(Address add : entry.getValue()) {
 				if(add.equals(myAddress))
-					return false;
+					return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	
 	private static void getCurrentList(LinkedHashMap<P2PFile,TreeSet<Address>> currentSearch, Address myAddress) {
@@ -211,22 +211,74 @@ public class Client {
 				++i;
 			}
 			
-			if(!test.equals(myAddress)) {
+			/*if(!test.equals(myAddress)) {
 				
 				try {
 					Socket s = new Socket(test.getAddressIp(), test.getPort());
-					ObjectOutputStream ois = new ObjectOutputStream(s.getOutputStream());
+					ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+					System.out.print("Envoi");
 					
-					ois.writeObject(new String("hello"));
+					oos.writeObject(new String("hello"));
+					
+					ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+					System.out.println((String)ois.readObject());
 	
-				} catch (IOException e) {
+				} catch (IOException | ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} finally {
 					
 				}
-			}
+			}*/
 				
+			
+		}
+	}
+	
+	private static void f(LinkedHashMap<P2PFile,TreeSet<Address>> currentGet, String ip, String pathFile)
+	{
+		P2PFile file = null;
+		TreeSet<Address> cli = null;
+		ip = ip.replaceAll("/", "");
+		
+		for(Map.Entry<P2PFile, TreeSet<Address>> entry : currentGet.entrySet()) {
+			file = entry.getKey();
+			cli = entry.getValue();
+		}
+		
+		try
+		{
+			int numPack = (int)Math.ceil(((double)file.getSize())/1024);
+			int numPackCli = numPack/cli.size();
+			int resteDiv = numPack%cli.size();
+			int min = 0, max = (cli.size() == 1)? numPackCli+1 : numPackCli;
+			int i = 0;
+			
+			for(Address add : cli) {
+				Socket s = new Socket(add.getAddressIp(), add.getPort());
+				ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+				
+				DatagramSocket ds = new DatagramSocket();
+				
+				String request = ip + "/" + ds.getLocalPort() + "/" + file.getName() + "/" + file.getSize() + "/" + min + "/" + max;
+				
+				oos.writeObject(request);
+				oos.flush();
+				
+				ThreadReceiver tr = new ThreadReceiver(ds,file.getName(),pathFile);
+				tr.start();
+				
+				min += numPackCli;
+				i++;
+				
+				if(i == cli.size()-1)
+					max += numPackCli + resteDiv + 1;
+				else
+					max += numPackCli;
+			}
+		}
+		catch(IOException e)
+		{
 			
 		}
 	}
